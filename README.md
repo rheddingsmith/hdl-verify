@@ -4,7 +4,7 @@ A reusable hardware verification framework built on [cocotb](https://www.cocotb.
 
 ## Status
 
-**In active development.** The framework core is being built and validated against a set of existing protocol controllers (UART, SPI, I2C). No tagged release yet. Interfaces are expected to change until the core has been exercised by at least three distinct designs.
+**In active development.** Toolchain, packaging, and the clock/reset harness are working; the transaction, driver, monitor, and scoreboard layers are next. The core is being validated against a set of existing protocol controllers (UART, SPI, I2C). No tagged release yet — interfaces are expected to change until the core has been exercised by at least three distinct designs.
 
 See the [roadmap](#roadmap) for what is planned and what is complete.
 
@@ -36,6 +36,17 @@ flowchart TD
 
 The framework core provides the test runner, stimulus utilities, scoreboard base, coverage collection, and reporting. Each design under test supplies a thin adapter: its own driver, monitor, golden model, and coverage model.
 
+## Design decisions
+
+Recorded so the reasoning survives:
+
+1. **Transactions are objects, not bare values.** SPI transfers carry two payloads (full duplex) and I2C carries an address, data, and an acknowledgment. A plain integer cannot represent those, so the base class provides behavior rather than assuming a payload shape.
+2. **A shared harness owns clock and reset.** Individual tests do not repeat setup boilerplate, so clock periods and reset sequences cannot drift between tests.
+3. **Expected results are derived from observed inputs, not from test intent.** An input monitor reports what the DUT actually received, and the golden model computes the expectation from that. If the driver has a bug, this catches it; declaring expectations in the test would hide it.
+4. **The core owns the loops; each DUT fills in one step.** Adding a new design must not require changes inside `src/hdl_verify/`. That constraint is the test of whether the abstraction is real.
+5. **Tests ask a predicate whether to continue.** Fixed transaction counts today, coverage-driven closure later, without restructuring the test loop.
+6. **Every random run reports its seed and accepts one.** A randomized failure that cannot be reproduced cannot be debugged.
+
 ## Usage
 
 To verify a design with this framework, a project implements three things specific to its DUT: a driver that turns transactions into pin activity, a monitor that recovers transactions from pin activity, and a golden model that computes expected results. Everything else (randomization, scoreboarding, coverage collection, regression running, and reporting) comes from the framework core.
@@ -50,22 +61,43 @@ The `examples/` directory contains complete verification environments for real d
 
 | Example | Design under test | Status |
 |---|---|---|
-| `examples/uart/` | 8N1 UART transmitter and receiver | Planned |
+| `examples/uart/` | 8N1 UART transmitter and receiver | In progress |
 | `examples/spi/` | SPI Mode-0 master | Planned |
 | `examples/i2c/` | I2C master (single-byte write) | Planned |
 
 ## Roadmap
 
-- [ ] Core: clock/reset fixtures and test runner
-- [ ] Core: transaction base class and constrained-random stimulus utilities
-- [ ] Core: driver and monitor base classes
-- [ ] Core: scoreboard with configurable comparison
-- [ ] Core: functional coverage collection and reporting
-- [ ] Example: UART verification environment
-- [ ] Example: SPI verification environment
-- [ ] Example: I2C verification environment
-- [ ] CI: regression suite on every push
-- [ ] Packaging: installable release
+### Phase 0 — Foundation
+
+- [x] cocotb + Icarus Verilog toolchain running against a real DUT
+- [x] Installable package (`src/` layout, editable install)
+- [x] Clock and optional-reset harness, DUT-agnostic by signal handle
+
+### Phase A — Core framework, validated on the UART
+
+- [ ] Transaction base class (comparison, formatting) + UART subclass
+- [ ] Driver base class (owns the loop) + UART driver (fills the step)
+- [ ] Monitor base class + UART output monitor
+- [ ] UART input monitor, so expectations derive from observed stimulus
+- [ ] UART golden model
+- [ ] Scoreboard with error counting and reporting
+- [ ] First self-checking UART test — the first test capable of failing
+- [ ] Constrained-random stimulus generator with seed reporting and override
+- [ ] Functional coverage collection and end-of-run report
+- [ ] Coverage-aware done predicate
+
+### Phase B — Proving reusability
+
+- [ ] SPI adapter (transaction, driver, monitor, golden model) with **no changes to the core**
+- [ ] I2C adapter — bidirectional line, addressing, acknowledgment
+- [ ] Core API frozen once three distinct designs have exercised it
+
+### Phase C — Release quality
+
+- [ ] Unit tests for the framework itself
+- [ ] CI running the full regression on every push
+- [ ] Results section populated with coverage figures and bugs found
+- [ ] Tagged `v0.1.0` release
 
 ## Results
 
