@@ -29,7 +29,7 @@ class UartDriver(Driver):
 
         self.dut.i_tx_dv.value = 1
 
-        await RisingEdge(self.dut.i_clk)
+        await RisingEdge(self.dut.o_tx_active)
 
         self.dut.i_tx_dv.value = 0
 
