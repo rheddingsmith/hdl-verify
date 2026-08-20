@@ -76,7 +76,7 @@ The `examples/` directory contains complete verification environments for real d
 ### Phase A — Core framework, validated on the UART
 
 - [x] Transaction base class (comparison, formatting) + UART subclass
-- [ ] Driver base class (owns the loop) + UART driver (fills the step)
+- [x] Driver base class (owns the loop) + UART driver (fills the step)
 - [ ] Monitor base class + UART output monitor
 - [ ] UART input monitor, so expectations derive from observed stimulus
 - [ ] UART golden model
