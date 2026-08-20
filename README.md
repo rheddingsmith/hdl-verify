@@ -78,7 +78,7 @@ The `examples/` directory contains complete verification environments for real d
 - [x] Transaction base class (comparison, formatting) + UART subclass
 - [x] Driver base class (owns the loop) + UART driver (fills the step)
 - [x] Monitor base class + UART output monitor
-- [ ] UART input monitor, so expectations derive from observed stimulus
+- [x] UART input monitor, so expectations derive from observed stimulus
 - [ ] UART golden model
 - [ ] Scoreboard with error counting and reporting
 - [ ] First self-checking UART test — the first test capable of failing
