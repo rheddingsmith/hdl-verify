@@ -4,6 +4,7 @@ from uart_driver import UartDriver
 from uart_monitor import UartMonitor
 from uart_monitor import UartInputMonitor
 from uart_transaction import UartTransaction
+from hdl_verify.stimulus import generate_values
 from hdl_verify.scoreboard import Scoreboard
 from cocotb.triggers import ClockCycles
 from hdl_verify.harness import harness
@@ -31,32 +32,34 @@ async def uart_test(dut):
 
     #create temporary subscribers to test the monitors
     #Pass output argument to the scoreboard
-    def temporary_subscriber(arg):
+    def subscriber(arg):
         
         scoreboard.check(arg)
 
         print(f'OUT: {arg}')
 
     #Pass input argument through golden model then to the scoreboard
-    def temporary_input_subscriber(arg):
+    def input_subscriber(arg):
 
         scoreboard.expect(uart_model(arg))
 
         print(f'IN: {arg}')
 
     #add the subscribers and start monitors before sending data
-    uart_monitor.add_subscriber(temporary_subscriber)
+    uart_monitor.add_subscriber(subscriber)
     uart_monitor.start()
-    uart_input_monitor.add_subscriber(temporary_input_subscriber)
+    uart_input_monitor.add_subscriber(input_subscriber)
     uart_input_monitor.start()
 
-    #send test data
-    driver.send(UartTransaction(0xA5))
-    driver.send(UartTransaction(0x3C))
-    driver.send(UartTransaction(0xFF))
+    #Generate test data
+    test_vals = generate_values(10, 0, 0xFF, [0x00, 0xFF, 0x01, 0x80, 0x55])
 
+    #Send test data
+    for i in test_vals:
+        driver.send(UartTransaction(i))
+    
     #pause until 3000 cycles have passed
-    await ClockCycles(dut.i_clk, 3000)
+    await ClockCycles(dut.i_clk, 20000)
 
     #Check the scoreboard's report
     scoreboard.report()
