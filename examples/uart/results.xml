@@ -1,6 +1,8 @@
 <testsuites name="results">
   <testsuite name="all" package="all">
-    <property name="random_seed" value="1787270065" />
-    <testcase name="uart_test" classname="test_uart" file="/home/rhedd/projects/hdl-verify/examples/uart/test_uart.py" lineno="10" time="0.1185300350189209" sim_time_ns="29990.0" ratio_time="253016.03931199978" />
+    <property name="random_seed" value="1787276733" />
+    <testcase name="uart_test" classname="test_uart" file="/home/rhedd/projects/hdl-verify/examples/uart/test_uart.py" lineno="12" time="0.1314253807067871" sim_time_ns="29990.0" ratio_time="228190.32243785806">
+      <failure error_type="AssertionError" error_msg="3 Mismatches detected&#10;assert 3 == 0&#10; +  where 3 = &lt;hdl_verify.scoreboard.Scoreboard object at 0x7f43f9556d50&gt;.mismatches" />
+    </testcase>
   </testsuite>
 </testsuites>
