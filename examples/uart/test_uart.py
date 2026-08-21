@@ -4,6 +4,7 @@ from uart_driver import UartDriver
 from uart_monitor import UartMonitor
 from uart_monitor import UartInputMonitor
 from uart_transaction import UartTransaction
+from uart_coverage import UartCoverage
 from hdl_verify.stimulus import generate_values
 from hdl_verify.scoreboard import Scoreboard
 from cocotb.triggers import ClockCycles
@@ -21,6 +22,10 @@ async def uart_test(dut):
     driver = UartDriver(dut)
     driver.start()
 
+    #Create and set the coverage object
+    coverage = UartCoverage()
+    coverage.register_bins()
+
     #create the output monitor
     uart_monitor = UartMonitor(dut)
 
@@ -31,10 +36,11 @@ async def uart_test(dut):
     scoreboard = Scoreboard()
 
     #create temporary subscribers to test the monitors
-    #Pass output argument to the scoreboard
+    #Pass output argument to the scoreboard sample coverage
     def subscriber(arg):
         
         scoreboard.check(arg)
+        coverage.sample_bins(arg)
 
         print(f'OUT: {arg}')
 
@@ -58,8 +64,11 @@ async def uart_test(dut):
     for i in test_vals:
         driver.send(UartTransaction(i))
     
-    #pause until 3000 cycles have passed
+    #pause until 20000 cycles have passed
     await ClockCycles(dut.i_clk, 20000)
+
+    #Report coverage
+    coverage.report()
 
     #Check the scoreboard's report
     scoreboard.report()
