@@ -82,7 +82,7 @@ The `examples/` directory contains complete verification environments for real d
 - [x] UART golden model
 - [x] Scoreboard with error counting and reporting
 - [x] First self-checking UART test — the first test capable of failing
-- [ ] Constrained-random stimulus generator with seed reporting and override
+- [x] Constrained-random stimulus generator with seed reporting and override
 - [ ] Functional coverage collection and end-of-run report
 - [ ] Coverage-aware done predicate
 
