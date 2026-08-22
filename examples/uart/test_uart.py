@@ -7,8 +7,8 @@ from uart_transaction import UartTransaction
 from uart_coverage import UartCoverage
 from hdl_verify.stimulus import generate_values
 from hdl_verify.scoreboard import Scoreboard
-from cocotb.triggers import ClockCycles
 from hdl_verify.harness import harness
+from hdl_verify.harness import wait_for
 
 #register function with cocotb
 @cocotb.test()
@@ -64,8 +64,8 @@ async def uart_test(dut):
     for i in test_vals:
         driver.send(UartTransaction(i))
     
-    #pause until 20000 cycles have passed
-    await ClockCycles(dut.i_clk, 20000)
+    #pause until number of test values = number of values in scoreboard
+    await wait_for(lambda: (len(test_vals) == scoreboard.total()), dut.i_clk)
 
     #Report coverage
     coverage.report()

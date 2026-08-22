@@ -84,7 +84,7 @@ The `examples/` directory contains complete verification environments for real d
 - [x] First self-checking UART test — the first test capable of failing
 - [x] Constrained-random stimulus generator with seed reporting and override
 - [x] Functional coverage collection and end-of-run report
-- [ ] Coverage-aware done predicate
+- [x] Coverage-aware done predicate
 
 ### Phase B — Proving reusability
 

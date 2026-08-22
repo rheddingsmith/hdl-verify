@@ -1,6 +1,7 @@
 from hdl_verify.coverage import Coverage
 
 class UartCoverage(Coverage):
+
     def register_bins(coverage):
 
         for i in range(8):

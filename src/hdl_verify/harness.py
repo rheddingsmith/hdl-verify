@@ -30,6 +30,26 @@ async def harness(clock, period = 10, unit = "ns", reset = None, rst_active = 1,
         await ClockCycles(clock, 1)
 
     return clk
+
+async def wait_for(condition, clock, timeout = 100000 , poll = 10):
+    """
+    Wait for a condition becomes true, or a timeout.
+
+    Replaces fixed-duration waits.
+
+    Condition is polled every "poll" cycles rather than constantly checking
+    """
+    total_cycles = 0
+
+    while (not condition()):
+
+        total_cycles += poll
+
+        if(total_cycles > timeout):
+
+            raise TimeoutError(f'Timed out after {timeout} clock cycles waiting for all transactions to be checked')
+
+        await ClockCycles(clock, poll)
     
 
     

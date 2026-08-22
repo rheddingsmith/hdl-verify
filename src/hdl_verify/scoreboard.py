@@ -1,3 +1,4 @@
+from hdl_verify.harness import harness
 
 class Scoreboard:
     """
@@ -40,6 +41,12 @@ class Scoreboard:
         assert(self.mismatches == 0), f'{self.mismatches} Mismatches detected'
 
         assert(len(self.expected) == 0), "Not all values checked"
+
+
+    def total(self):
+
+        return self.matches + self.mismatches
+
 
 
 
