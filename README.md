@@ -4,7 +4,7 @@ A reusable hardware verification framework built on [cocotb](https://www.cocotb.
 
 ## Status
 
-**In active development.** Toolchain, packaging, and the clock/reset harness are working; the transaction, driver, monitor, and scoreboard layers are next. The core is being validated against a set of existing protocol controllers (UART, SPI, I2C). No tagged release yet — interfaces are expected to change until the core has been exercised by at least three distinct designs.
+**In active development.** Toolchain, packaging, and the clock/reset harness are working; the transaction, driver, monitor, and scoreboard layers are complete. The core is being validated against a set of existing protocol controllers (UART, SPI, I2C). No tagged release yet — interfaces are expected to change until the core has been exercised by at least three distinct designs.
 
 See the [roadmap](#roadmap) for what is planned and what is complete.
 
